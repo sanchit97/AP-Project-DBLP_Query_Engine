@@ -4,8 +4,7 @@ class DBLP
 {
 	public static void main(String [] args)
 	{
-		System.out.println("");
-		System.out.println("");
+		
 	}
 }
 class Parser
@@ -13,6 +12,10 @@ class Parser
 	
 }
 class GUI
+{
+	
+}
+class Exceptions
 {
 	
 }
