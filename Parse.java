@@ -56,15 +56,15 @@ class Article
 	{
 		authors=new ArrayList<String>();
 		authors.add(a);
-		key="";
-		mdate="";
-		title="";
-		pages="";
-		year="";
-		volume="";
-		journal="";
-		url="";
-		ee="";
+		key=" ";
+		mdate=" ";
+		title=" ";
+		pages=" ";
+		year=" ";
+		volume=" ";
+		journal=" ";
+		url=" ";
+		ee=" ";
 	}
 }
 class UserHandler extends DefaultHandler
@@ -138,6 +138,7 @@ class UserHandler extends DefaultHandler
 
 		if(qName.equalsIgnoreCase("proceedings"))
 		{
+			counter_proceedings++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 			System.out.println("Key:"+ key);
@@ -145,6 +146,7 @@ class UserHandler extends DefaultHandler
 		}
 		if(qName.equalsIgnoreCase("inproceedings"))
 		{
+			counter_inproceedings++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 			System.out.println("Key:"+ key);
@@ -152,6 +154,7 @@ class UserHandler extends DefaultHandler
 		}
 		if(qName.equalsIgnoreCase("book"))
 		{
+			counter_book++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 			System.out.println("Key:"+ key);
@@ -159,6 +162,7 @@ class UserHandler extends DefaultHandler
 		}
 		if(qName.equalsIgnoreCase("incollection"))
 		{
+			counter_incollection++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 			System.out.println("Key:"+ key);
@@ -166,6 +170,7 @@ class UserHandler extends DefaultHandler
 		}
 		if(qName.equalsIgnoreCase("phdthesis"))
 		{
+			counter_phdthesis++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 			System.out.println("Key:"+ key);
@@ -173,6 +178,7 @@ class UserHandler extends DefaultHandler
 		}
 		if(qName.equalsIgnoreCase("masterthesis"))
 		{
+			counter_masterthesis++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 			System.out.println("Key:"+ key);
