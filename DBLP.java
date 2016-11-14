@@ -13,7 +13,7 @@ class Parser
 }
 class GUI
 {
-	
+	JFrame j=new JFrame();
 }
 class Exceptions
 {
