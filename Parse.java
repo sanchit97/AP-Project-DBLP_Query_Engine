@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.*;
-import javax.swing.*;
+
 public class Parse
 {
 	public static void main(String [] args)
@@ -17,8 +17,31 @@ public class Parse
 			File inputFile = new File("dblp.xml");
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
-			UserHandler userhandler = new UserHandler();
-			saxParser.parse(inputFile, userhandler);     
+			UserHandler1 userhandler1 = new UserHandler1();
+			System.out.println("Enter Query:");
+			System.out.println("Query 1..........1");
+			System.out.println("Query 2..........2");
+			int ch;
+			Scanner sc=new Scanner(System.in);
+			ch=sc.nextInt();
+			switch(ch)
+			{
+				case 1:
+				System.out.println("Enter name of author(1)/title(2)");
+				int c;
+				c=sc.nextInt();
+				if(c==1)
+				{
+					// System.out.println("Enter name of Author");
+					// AUTHOR=sc.next();
+					saxParser.parse(inputFile, userhandler1);    
+				}
+				// if(c==2)
+				// {
+				// 	System.out.println("Enter title");
+				// 	saxParser.parse(inputFile, userhandler2);
+				// }
+			}
 		}
 		catch (Exception e)
 		{
@@ -27,9 +50,9 @@ public class Parse
 	}
 }
 
-class Article
+class Publication
 {
-	ArrayList<String> authors;
+	String authors;
 	String key;
 	String mdate;
 	String title;
@@ -40,9 +63,9 @@ class Article
 	String url;
 	String ee;
 
-	public Article()
+	public Publication()
 	{
-		authors=new ArrayList<String>();
+		authors="";
 		key="";
 		mdate="";
 		title="";
@@ -53,25 +76,11 @@ class Article
 		url="";
 		ee="";
 	}
-	public Article(String a)
-	{
-		authors=new ArrayList<String>();
-		authors.add(a);
-		key=" ";
-		mdate=" ";
-		title=" ";
-		pages=" ";
-		year=" ";
-		volume=" ";
-		journal=" ";
-		url=" ";
-		ee=" ";
-	}
 }
-class UserHandler extends DefaultHandler
+class UserHandler1 extends DefaultHandler
 {
-	ArrayList<Article> articlelist=new ArrayList<Article>();
-	int writing=0;
+	ArrayList<Publication> artlist=new ArrayList<Publication>();
+	Publication a;
 
 	boolean bAuthor=false;
 	boolean bTitle=false;
@@ -81,28 +90,38 @@ class UserHandler extends DefaultHandler
 	boolean bJournal=false;
 	boolean bURL=false;
 	boolean bEE=false;
-
-	int counter_article=0;
-	int counter_www=0;
-	int counter_proceedings=0;
-	int counter_inproceedings=0;
-	int counter_book=0;
-	int counter_incollection=0;
-	int counter_phdthesis=0;
-	int counter_masterthesis=0;
+	String nameofauthor;
+	int found=0;
+	@Override
+	public void startDocument() throws SAXException
+	{
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter name of Author");
+		nameofauthor=sc.nextLine();
+	}
+	public void endDocument() throws SAXException
+	{
+		for(Publication m: artlist)
+		{
+			System.out.println(m.authors);
+			System.out.println(m.title);
+			System.out.println(m.pages);
+			System.out.println(m.year);
+			System.out.println(m.volume);
+			System.out.println(m.journal);
+			System.out.println(m.url);
+			System.out.println(m.ee);
+		} 
+	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
 	{
-		
+
 		if(qName.equalsIgnoreCase("article"))
 		{
-			counter_article++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
-			writing=1;
 		}
 		else if(qName.equalsIgnoreCase("author")) 
 		{
@@ -139,59 +158,38 @@ class UserHandler extends DefaultHandler
 
 		if(qName.equalsIgnoreCase("proceedings"))
 		{
-			counter_proceedings++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 		if(qName.equalsIgnoreCase("inproceedings"))
 		{
-			counter_inproceedings++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 		if(qName.equalsIgnoreCase("book"))
 		{
-			counter_book++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 		if(qName.equalsIgnoreCase("incollection"))
 		{
-			counter_incollection++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 		if(qName.equalsIgnoreCase("phdthesis"))
 		{
-			counter_phdthesis++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 		if(qName.equalsIgnoreCase("masterthesis"))
 		{
-			counter_masterthesis++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 		if(qName.equalsIgnoreCase("www"))
 		{
-			counter_www++;
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
-			System.out.println("Key:"+ key);
-			System.out.println("MDate:"+date);
 		}
 	}
 
@@ -199,37 +197,36 @@ class UserHandler extends DefaultHandler
 	{
 		if (qName.equalsIgnoreCase("article"))
 		{
-			System.out.println("End Element :" + qName);
-			writing=0;
+		}
+		else if (qName.equalsIgnoreCase("title"))
+		{
+			bTitle=false;
+		}
+		else if (qName.equalsIgnoreCase("author"))
+		{
+			bAuthor=false;
 		}
 		else if (qName.equalsIgnoreCase("proceedings"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 		else if (qName.equalsIgnoreCase("inproceedings"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 
 		else if (qName.equalsIgnoreCase("book"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 		else if (qName.equalsIgnoreCase("incollection"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 		else if (qName.equalsIgnoreCase("phdthesis"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 		else if (qName.equalsIgnoreCase("masterthesis"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 		else if (qName.equalsIgnoreCase("www"))
 		{
-			System.out.println("End Element :" + qName);
 		}
 	}
 
@@ -237,55 +234,88 @@ class UserHandler extends DefaultHandler
 	{
 		if(bAuthor) 
 		{
-			System.out.println("Author:"+new String(ch,start,length));
-			bAuthor=false;
-			Article a=new Article(new String(ch,start,length));
-			articlelist.add(a);
+			String w;
+			w=new String(ch,start,length);
+			//System.out.println(w);
+			//bAuthor=false;
+			//System.out.println(nameofauthor);
+			if(w.equals(nameofauthor))
+			{		
+				System.out.println("Found");
+				found=1;
+				a=new Article();
+				a.authors=w;
+				artlist.add(a);
+				//System.out.println(nameofauthor);
+			}
+			else
+			{
+				found=0;
+			}
 		}
 		else if(bTitle) 
 		{
-			System.out.println("Title:"+new String(ch,start,length));
-			bTitle=false;
+			//System.out.println("Title:"+new String(ch,start,length));
+			//bTitle=false;
+			if(found==1)
+			//System.out.println(new String(ch,start,length));
+			a.title=new String(ch,start,length);
 		}
 		else if(bPages) 
 		{
-			System.out.println("Pages:"+new String(ch,start,length));
+			//System.out.println("Pages:"+new String(ch,start,length));
 			bPages=false;
+			if(found==1)
+			// System.out.println(new String(ch,start,length));
+			a.pages=new String(ch,start,length);
+			//System.out.println(new String(ch,start,length));
 		}
 		else if(bYear) 
 		{
-			System.out.println("Year:"+new String(ch,start,length));
+			//System.out.println("Year:"+new String(ch,start,length));
 			bYear=false;
+			if(found==1)
+			// System.out.println(new String(ch,start,length));
+			//System.out.println(new String(ch,start,length));
+			a.year=new String(ch,start,length);
 		}
 		else if(bVolume) 
 		{
-			System.out.println("Volume:"+new String(ch,start,length));
+			//System.out.println("Volume:"+new String(ch,start,length));
 			bVolume=false;
+		
+			if(found==1)
+			a.volume=new String(ch,start,length);
+			// System.out.println(new String(ch,start,length));
+			//System.out.println(new String(ch,start,length));
 		}
 		else if(bJournal) 
 		{
-			System.out.println("Journal:"+new String(ch,start,length));
+			//System.out.println("Journal:"+new String(ch,start,length));
 			bJournal=false;
+			if(found==1)
+			a.journal=new String(ch,start,length);
+			// System.out.println(new String(ch,start,length));
+			//System.out.println(new String(ch,start,length));
 		}
 		else if(bURL) 
 		{
-			System.out.println("URL:"+new String(ch,start,length));
+			//System.out.println("URL:"+new String(ch,start,length));
 			bURL=false;
+			if(found==1)
+			a.url=new String(ch,start,length);
+			// System.out.println(new String(ch,start,length));
+			//System.out.println(new String(ch,start,length));
 		}
 		else if(bEE) 
 		{
-			System.out.println("EE:"+new String(ch,start,length));
+			//System.out.println("EE:"+new String(ch,start,length));
 			bEE=false;
+			if(found==1)
+			a.ee=new String(ch,start,length);
+			// System.out.println(new String(ch,start,length));
+			//System.out.println(new String(ch,start,length));
 		}
-		System.out.println("www"+counter_www);
-		System.out.println("article"+counter_article);
-		System.out.println("book"+counter_book);
-		System.out.println("masterthes"+counter_masterthesis);
-		System.out.println("phdthesis"+counter_phdthesis);
-		System.out.println("incollection"+counter_incollection);
-		System.out.println("inproceedings"+counter_inproceedings);
-		System.out.println("proceedings"+counter_proceedings);
-		System.out.println("size"+articlelist.size());
 	}
 
 }
