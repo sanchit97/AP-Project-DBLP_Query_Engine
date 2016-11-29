@@ -133,26 +133,26 @@ public class GUI
  		query.setVisible(true);
  		return query;
  	}
- 	public void entityresolve()
-	{
-		names=new ArrayList<String>();
-		String namefinal=userhandler1.tag;
-		AuthHandler h=new AuthHandler();
-		saxParser.parse(inputFile,h);
-		ArrayList<Author> authorlist=h.getMyData();
-		names.add(namefinal);
-		for(String t: authorlist.name)
-		{
-			if(t.equals(namefinal))
-			{
-				names.add(t);
-				for(String temp: authorlist.name)
-				{
-					names.add(temp);
-				}
-			}
-		}
-	}
+ // 	public void entityresolve()
+	// {
+	// 	names=new ArrayList<String>();
+	// 	String namefinal=userhandler1.tag;
+	// 	AuthHandler h=new AuthHandler();
+	// 	saxParser.parse(inputFile,h);
+	// 	ArrayList<Author> authorlist=h.getMyData();
+	// 	names.add(namefinal);
+	// 	for(String t: authorlist.name)
+	// 	{
+	// 		if(t.equals(namefinal))
+	// 		{
+	// 			names.add(t);
+	// 			for(String temp: authorlist.name)
+	// 			{
+	// 				names.add(temp);
+	// 			}
+	// 		}
+	// 	}
+	// }
  	private void querySpace(String type, JPanel querySpace, JComboBox<String> queryList) 
  	{
  		if(type.equals("Query1")) 
@@ -360,8 +360,13 @@ public class GUI
 						SAXParser saxParser = factory.newSAXParser();
 	 					userhandler1=new UserHandler1();
 	 					userhandler1.tag=inputNameTag.getText();
-	 					entityresolve();
-	 					System.out.println(inputNameTag.getText());	
+	 					// entityresolve();
+	 					System.out.println(inputNameTag.getText());
+	 					WWWHandler w1=new WWWHandler();
+	 					System.out.println("yo");
+	 					saxParser.parse(inputFile,w1);	
+	 					userhandler1.alist=w1.getMyData();
+	 					//System.out.println(userhandler1.alist);
 	 					saxParser.parse(inputFile, userhandler1);
 	 					artlist=userhandler1.getList();
 	 					if(choice1==0)
@@ -371,7 +376,6 @@ public class GUI
 	 						{
 	 							Publication p=new Publication();
 	 							p=artlist.get(i);
-	 							// Vector<String> row=new Vector<String>();
 		 						Vector<String> rows=new Vector<String>();
 	 							rows.addElement(Integer.toString(i+1));
 	 							String auth="";
@@ -385,11 +389,11 @@ public class GUI
 	 							rows.addElement(p.journal);
 	 							rows.addElement(p.url);
 								rowData.addElement(rows);
-								System.out.println(rowData.size());
 								//mainFrame.remove(resultSpaceDefault());
 	 							mainFrame.getContentPane().add(resultSpaceDefault());
 	 							i++;
 	 						}
+	 						System.out.println(artlist.size());
  							//resultSpaceDefault().revalidate();
 	 					}
 	 					else if(choice1==1)
