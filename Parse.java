@@ -25,11 +25,11 @@ public class Parse
 		// 	e.printStackTrace();
 		// }
 	}
-}
+}••••••••
 
 class Publication
 {
-	String authors;
+	ArrayList<String> authors;
 	String key;
 	String mdate;
 	String title;
@@ -39,10 +39,11 @@ class Publication
 	String journal;
 	String url;
 	String ee;
+	int relevance;
 
 	public Publication()
 	{
-		authors="";
+		authors=new ArrayList<String>();
 		key="";
 		mdate="";
 		title="";
@@ -52,11 +53,13 @@ class Publication
 		journal="";
 		url="";
 		ee="";
+		relevance=0;
 	}
 }
 class UserHandler1 extends DefaultHandler
 {
 	ArrayList<Publication> artlist=new ArrayList<Publication>();
+	ArrayList<Author> alist=new ArrayList<Author>();
 	Publication a;
 	String tag="wa";
 	boolean bAuthor=false;
@@ -70,6 +73,11 @@ class UserHandler1 extends DefaultHandler
 	String nameofauthor;
 	int found=0;
 	int number=0;
+	ArrayList<String> searchinthis=new ArrayList<String>();
+	public ArrayList<Publication> getList()
+	{
+		return artlist;
+	}
 	public int getTotal()
 	{
 		return number;
@@ -78,21 +86,20 @@ class UserHandler1 extends DefaultHandler
 	public void startDocument() throws SAXException
 	{
 		nameofauthor=tag;
-	}
-	public void endDocument() throws SAXException
-	{
-		for(Publication m: artlist)
+		for(Author q: alist)
 		{
-			System.out.println(m.authors);
-			System.out.println(m.title);
-			System.out.println(m.pages);
-			System.out.println(m.year);
-			System.out.println(m.volume);
-			System.out.println(m.journal);
-			System.out.println(m.url);
-			System.out.println(m.ee);
-			System.out.println(number);
-		} 
+			if(q.alias.contains(nameofauthor))
+			{
+				for(String t: q.alias)
+				{
+					searchinthis.add(t);
+					System.out.println(t);
+				}
+				break;
+			}
+		}
+		System.out.println(searchinthis);
+		//search for nameofauthor in alist and store results in an arraylist
 	}
 
 	@Override
@@ -167,11 +174,6 @@ class UserHandler1 extends DefaultHandler
 			String key=attributes.getValue("key");
 			String date=attributes.getValue("mdate");
 		}
-		if(qName.equalsIgnoreCase("www"))
-		{
-			String key=attributes.getValue("key");
-			String date=attributes.getValue("mdate");
-		}
 	}
 
 	public void endElement(String uri,String localName, String qName) throws SAXException
@@ -206,9 +208,6 @@ class UserHandler1 extends DefaultHandler
 		else if (qName.equalsIgnoreCase("masterthesis"))
 		{
 		}
-		else if (qName.equalsIgnoreCase("www"))
-		{
-		}
 	}
 
 	public void characters(char ch[],int start, int length) throws SAXException
@@ -217,13 +216,21 @@ class UserHandler1 extends DefaultHandler
 		{
 			String w;
 			w=new String(ch,start,length);
-			if(w.contains(nameofauthor))
+			int tempvar=0;
+			if(searchinthis.contains(w)) //check if w is contained in arraylist
 			{		
-				System.out.println("Found");
+				String []arr=w.split(" ");
+				for ( String ss : arr) 
+				{
+			    	if(ss.equals(nameofauthor))
+			    		tempvar+=1;
+				}
+				// System.out.println("Found");
 				number+=1;
 				found=1;
 				a=new Publication();
-				a.authors=w;
+				a.authors.add(w);
+				a.relevance=tempvar;
 				artlist.add(a);
 			}
 			else
@@ -274,7 +281,6 @@ class UserHandler1 extends DefaultHandler
 			a.ee=new String(ch,start,length);
 		}
 	}
-
 }
 class UserHandler2 extends DefaultHandler
 {
@@ -292,6 +298,10 @@ class UserHandler2 extends DefaultHandler
 	String nameoftitle;
 	int found=0;
 	int number=0;
+	public ArrayList<Publication> getList()
+	{
+		return artlist;
+	}
 	public int getTotal()
 	{
 		return number;
@@ -439,19 +449,26 @@ class UserHandler2 extends DefaultHandler
 		{
 			
 			if(found==1)
-			a.authors=new String(ch,start,length);
+			a.authors.add(new String(ch,start,length));
 		}
 		else if(bTitle) 
 		{
 			String w;
 			w=new String(ch,start,length);
+			int tempvar=0;
 			if(w.contains(nameoftitle))
 			{		
-				System.out.println("Found");
+				String []arr=w.split(" ");
+				for ( String ss : arr) 
+				{
+			    	if(ss.equals(nameoftitle))
+			    		tempvar+=1;
+				}
 				number+=1;
 				found=1;
 				a=new Publication();
 				a.title=w;
+				a.relevance=tempvar;
 				artlist.add(a);
 			}
 			else
@@ -497,5 +514,146 @@ class UserHandler2 extends DefaultHandler
 			a.ee=new String(ch,start,length);
 		}
 	}
+
+}
+class UserHandler3 extends DefaultHandler
+{
+	boolean bAuthor=false;
+	int number=0;
+	HashMap<String,Integer> map=new HashMap<String,Integer>();
+	ArrayList<String> nauth;
+	public HashMap<String,Integer> getHash()
+	{
+		return map;
+	}
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
+	{
+
+		if(qName.equalsIgnoreCase("author")) 
+		{
+			bAuthor=true;
+			nauth=new ArrayList<String>();
+		}
+		
+	}
+
+	public void endElement(String uri,String localName, String qName) throws SAXException
+	{
+		
+		if (qName.equalsIgnoreCase("author"))
+		{
+			bAuthor=false;
+		}
+	}
+
+	public void characters(char ch[],int start, int length) throws SAXException
+	{
+		if(bAuthor) 
+		{
+			//nauth.add(new String(ch,start,length));
+			map.put(new String(ch,start,length),0);
+		}
+	}
+}
+class UserHandler4 extends DefaultHandler
+{
+	boolean bAuthor=false;
+	HashMap<String,Integer> map=new HashMap<String,Integer>();
+	public HashMap<String,Integer> getHash()
+	{
+		return map;
+	}
+	public void getMap(HashMap<String,Integer> m)
+	{
+		map=m;
+	}
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
+	{
+		if(qName.equalsIgnoreCase("author")) 
+		{
+			bAuthor=true;
+		}
+	}
+
+	public void endElement(String uri,String localName, String qName) throws SAXException
+	{
+		
+		if (qName.equalsIgnoreCase("author"))
+		{
+			bAuthor=false;
+		}
+	}
+
+	public void characters(char ch[],int start, int length) throws SAXException
+	{
+		if(bAuthor)
+		{
+			String authorfinal=new String(ch,start,length);
+			map.put(authorfinal,(map.get(authorfinal))+1);
+		}
+	}
+}
+class Author
+{
+	ArrayList<String> alias;
+	// ArrayList<Publication> publications;
+	public Author()
+	{
+		alias=new ArrayList<String>();
+	}
+}
+class WWWHandler extends DefaultHandler
+{
+	Author author;
+	ArrayList<Author> authors_list = new ArrayList<Author>();
+	boolean bAuthor = false;
+	boolean bWWW = false;
+
+	public ArrayList<Author> getMyData()
+	{
+		return authors_list;
+	}
+
+	public void endDocument() throws SAXException
+	{
+		// for(Author z: authors_list)
+		// {
+		// 	System.out.println(z.alias);
+		// } 
+	}
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
+	{
+		if ( qName.equalsIgnoreCase("www") )
+		{
+			bWWW = true;
+			author = new Author();
+		} 
+		else if (qName.equalsIgnoreCase("author") && bWWW)
+		{
+			bAuthor = true;
+		} 
+	}
+
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException{
+		if ( qName.equalsIgnoreCase("www") )
+		{
+			bWWW=false;
+			authors_list.add(author);
+		}
+	}
+
+	@Override
+	public void characters(char ch[], int start, int length) throws SAXException{
+		if(bAuthor)
+		{
+			author.alias.add(new String(ch, start, length));
+			bAuthor = false;
+		}
+	}
+
 
 }
